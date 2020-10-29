@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace IB1
+namespace IB1_main
 {
-    public partial class Form1 : Form
+    public partial class FormAdd : Form
     {
-        public Form1()
+        public FormAdd()
         {
             InitializeComponent();
         }
