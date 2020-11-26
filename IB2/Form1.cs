@@ -208,6 +208,15 @@ namespace IB2
             };
             try
             {
+                using (Stream s = File.OpenWrite(encryptedFile))
+                {
+                    using (CryptoStream cs = new CryptoStream(s, new DESCryptoServiceProvider().CreateEncryptor(DESCrypt.Key, DESCrypt.IV), CryptoStreamMode.Write))
+                    {
+                        byte[] data = File.ReadAllBytes(decryptedFile);
+                        cs.Write(data, 0, data.Length);
+                    }
+                }
+                /*
                 string tempString;
                 using (var reader = new StreamReader(decryptedFile))
                 {
@@ -220,6 +229,7 @@ namespace IB2
                 strWriter.Close();
                 cStr.Close();
                 fStr.Close();
+                */
             }
             catch (Exception ex)
             {
@@ -248,6 +258,17 @@ namespace IB2
             };
             try
             {
+                var cryptDes = new DESCryptoServiceProvider();
+                using (Stream s = File.OpenRead(encryptedFile))
+                {
+                    using (CryptoStream cs = new CryptoStream(s, cryptDes.CreateDecryptor(DESCrypt.Key, DESCrypt.IV), CryptoStreamMode.Read))
+                    {
+                        byte[] data = new byte[s.Length - cryptDes.IV.Length];
+                        cs.Read(data, 0, data.Length);
+                        File.WriteAllBytes(decryptedFile, data);
+                    }
+                }
+                /*
                 FileStream fStr = File.Open(encryptedFile, FileMode.OpenOrCreate);
                 CryptoStream cStr = new CryptoStream(fStr, new DESCryptoServiceProvider().CreateDecryptor(DESCrypt.Key, DESCrypt.IV), CryptoStreamMode.Read);
                 StreamReader strReader = new StreamReader(cStr);
@@ -258,12 +279,12 @@ namespace IB2
                 StreamWriter strWriter = new StreamWriter(decryptedFile);
                 strWriter.WriteLine(tempString);
                 strWriter.Close();
+                */
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Ошибка при открытии зашифрованного файла: {0}", ex.Message);
             }
         }
-
     }
 }
